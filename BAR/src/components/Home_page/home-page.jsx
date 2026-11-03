@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import {
-  Alert,
   Image,
   ImageBackground,
   Pressable,
@@ -18,6 +17,7 @@ const featuredPlaces = [
   {
     name: 'The Living Room',
     rating: '4.6',
+    priceForTwo: '1,200',
     cuisines: 'North Indian, Pasta, Italian, Fast Food',
     location: 'Anna Nagar East, Chennai',
     image: 'photo-1517248135467-4c7edcad34c4',
@@ -25,6 +25,7 @@ const featuredPlaces = [
   {
     name: 'Black Orchid',
     rating: '4.6',
+    priceForTwo: '1,800',
     cuisines: 'Sushi, Asian, Pizza, Japanese',
     location: 'RA Puram, Chennai',
     image: 'photo-1514933651103-005eec06c04b',
@@ -32,6 +33,7 @@ const featuredPlaces = [
   {
     name: 'The Thief - Rooftop | Bar',
     rating: '3.9',
+    priceForTwo: '2,000',
     cuisines: 'North Indian, Continental, Italian',
     location: 'Nungambakkam, Chennai',
     offer: 'Flat 20% OFF',
@@ -40,6 +42,7 @@ const featuredPlaces = [
   {
     name: 'Koox',
     rating: '4.5',
+    priceForTwo: '1,600',
     cuisines: 'Japanese, Sushi, Sichuan, Desserts',
     location: 'Nandanam, Chennai',
     image: 'photo-1519671482749-fd09be7ccebf',
@@ -47,6 +50,7 @@ const featuredPlaces = [
   {
     name: 'Lower Deck',
     rating: '4.3',
+    priceForTwo: '1,500',
     cuisines: 'Continental, Bar Food, Grill',
     location: 'T. Nagar, Chennai',
     image: 'photo-1514933651103-005eec06c04b',
@@ -54,6 +58,7 @@ const featuredPlaces = [
   {
     name: 'Radio Room',
     rating: '4.4',
+    priceForTwo: '1,800',
     cuisines: 'Asian, Tapas, Cocktails',
     location: 'Alwarpet, Chennai',
     image: 'photo-1514362545857-3bc16c4c7d1b',
@@ -61,6 +66,7 @@ const featuredPlaces = [
   {
     name: "Watson's",
     rating: '4.2',
+    priceForTwo: '1,400',
     cuisines: 'North Indian, Chinese, Bar Food',
     location: 'Velachery, Chennai',
     image: 'photo-1517248135467-4c7edcad34c4',
@@ -68,6 +74,7 @@ const featuredPlaces = [
   {
     name: 'IGNNA Cocktail Bar',
     rating: '4.5',
+    priceForTwo: '2,000',
     cuisines: 'Cocktails, Small Plates, Asian',
     location: 'Adyar, Chennai',
     offer: 'Flat 10% OFF',
@@ -111,17 +118,17 @@ export default function HomePage() {
             <Text style={styles.heroEyebrow}>GOOD DRINKS. BETTER COMPANY.</Text>
             <Text style={styles.heroTitle}>Your night{ '\n' }starts here.</Text>
             <Text style={styles.heroSubtitle}>A little room for a long evening.</Text>
-            <Pressable
+            {/* <Pressable
               accessibilityRole="button"
               onPress={() => Alert.alert('Reservations', 'Call us at (212) 555-0148 to save your seat.')}
               style={({ pressed }) => [styles.reserveButton, pressed && styles.pressed]}>
               <Text style={styles.reserveButtonText}>BOOK A TABLE</Text>
               <Text style={styles.reserveArrow}>↗</Text>
-            </Pressable>
+            </Pressable> */}
           </View>
-          <Text style={styles.heroIndex}>01 / 03</Text>
+          {/* <Text style={styles.heroIndex}>01 / 03</Text> */}
         </ImageBackground>
-
+{/*
         <View style={styles.detailsRow}>
           <View style={styles.detailBlock}>
             <Text style={styles.detailLabel}>TONIGHT</Text>
@@ -133,7 +140,7 @@ export default function HomePage() {
             <Text style={styles.detailValue}>14 Orchard Street</Text>
           </View>
           <Text style={styles.pin}>↗</Text>
-        </View>
+        </View> */}
 
         <View style={styles.placesSection}>
           <Text style={styles.placesHeading}>Popular bars & restaurants</Text>
@@ -148,6 +155,7 @@ export default function HomePage() {
                   params: {
                     name: place.name,
                     rating: place.rating,
+                    priceForTwo: place.priceForTwo,
                     cuisines: place.cuisines,
                     location: place.location,
                     image: place.image,
@@ -165,6 +173,9 @@ export default function HomePage() {
                     source={{ uri: `https://images.unsplash.com/${place.image}?auto=format&fit=crop&w=720&h=480&q=85` }}
                     style={styles.placeImage}
                   />
+                  <View style={styles.placePrice}>
+                    <Text style={styles.placePriceText}>₹{place.priceForTwo} for two</Text>
+                  </View>
                   {place.offer ? (
                     <View style={styles.placeOffer}>
                       <Text style={styles.placeOfferText}>✿  {place.offer}</Text>

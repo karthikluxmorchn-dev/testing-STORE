@@ -171,6 +171,20 @@ export const styles = StyleSheet.create({
     height: 180,
     backgroundColor: '#d7d4ca',
   },
+  placePrice: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    paddingHorizontal: 9,
+    paddingVertical: 6,
+    backgroundColor: 'rgba(20, 28, 23, 0.88)',
+    borderRadius: 5,
+  },
+  placePriceText: {
+    color: '#ffffff',
+    fontSize: 11,
+    fontWeight: '800',
+  },
   placeOffer: {
     position: 'absolute',
     right: 0,
