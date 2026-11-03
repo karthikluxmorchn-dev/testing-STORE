@@ -10,6 +10,11 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
+
+const DUMMY_CREDENTIALS = {
+  email: 'demo@bar.com',
+};
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -18,17 +23,12 @@ export default function LoginScreen() {
   const [message, setMessage] = useState('');
 
   function handleLogin() {
-    if (!email.trim() || !password) {
-      setMessage('Enter your email and password to continue.');
+    if (email.trim().toLowerCase() !== DUMMY_CREDENTIALS.email) {
+      setMessage(`Use the demo email ${DUMMY_CREDENTIALS.email}.`);
       return;
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      setMessage('Enter a valid email address.');
-      return;
-    }
-
-    setMessage('Login is not connected yet. Please try again later.');
+    router.replace('/home');
   }
 
   return (
@@ -46,7 +46,7 @@ export default function LoginScreen() {
 
             <Text style={styles.eyebrow}>WELCOME BACK</Text>
             <Text style={styles.title}>Sign in to BAR</Text>
-            <Text style={styles.subtitle}>Enter your details to access your account.</Text>
+            <Text style={styles.subtitle}>Use the demo email below. Any password will work.</Text>
 
             <View style={styles.form}>
               <Text style={styles.label}>Email address</Text>
@@ -58,20 +58,13 @@ export default function LoginScreen() {
                   setEmail(value);
                   setMessage('');
                 }}
-                placeholder="you@example.com"
+                placeholder={DUMMY_CREDENTIALS.email}
                 placeholderTextColor="#94A3B8"
                 style={styles.input}
                 value={email}
               />
 
-              <View style={styles.passwordLabelRow}>
-                <Text style={styles.label}>Password</Text>
-                <Pressable
-                  accessibilityRole="button"
-                  onPress={() => setMessage('Password reset is not available yet.')}>
-                  <Text style={styles.textLink}>Forgot password?</Text>
-                </Pressable>
-              </View>
+              <Text style={styles.label}>Password</Text>
               <View style={styles.passwordInputContainer}>
                 <TextInput
                   autoCapitalize="none"
@@ -105,14 +98,6 @@ export default function LoginScreen() {
               </Pressable>
             </View>
 
-            <View style={styles.footer}>
-              <Text style={styles.footerText}>Don&apos;t have an account?</Text>
-              <Pressable
-                accessibilityRole="button"
-                onPress={() => setMessage('Account creation is not available yet.')}>
-                <Text style={styles.textLink}> Create account</Text>
-              </Pressable>
-            </View>
           </View>
           <Text style={styles.bottomCaption}>BAR · YOUR ACCOUNT, ALL IN ONE PLACE</Text>
         </ScrollView>
@@ -202,16 +187,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginBottom: 10,
   },
-  passwordLabelRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  textLink: {
-    color: '#2563EB',
-    fontSize: 13,
-    fontWeight: '600',
-  },
   passwordInputContainer: {
     height: 52,
     borderWidth: 1,
@@ -258,16 +233,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 15,
     fontWeight: '700',
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 26,
-  },
-  footerText: {
-    color: '#64748B',
-    fontSize: 14,
   },
   bottomCaption: {
     color: '#94A3B8',
