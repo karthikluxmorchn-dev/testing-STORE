@@ -1,0 +1,732 @@
+import { useState } from 'react';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
+
+const PRODUCT = {
+  name: 'BAR Premium Membership',
+  quantity: 1,
+  price: 2499,
+};
+
+const METHODS = [
+  { id: 'upi', label: 'UPI', symbol: 'UP' },
+  { id: 'credit', label: 'Credit Card', symbol: 'CC' },
+  { id: 'debit', label: 'Debit Card', symbol: 'DC' },
+  { id: 'bank', label: 'Net Banking', symbol: 'NB' },
+];
+
+const BANKS = ['State Bank of India', 'HDFC Bank', 'ICICI Bank', 'Axis Bank'];
+
+export default function PaymentPage() {
+  const [selectedMethod, setSelectedMethod] = useState('upi');
+  const [upiId, setUpiId] = useState('');
+  const [cardholderName, setCardholderName] = useState('');
+  const [cardNumber, setCardNumber] = useState('');
+  const [expiryDate, setExpiryDate] = useState('');
+  const [cvv, setCvv] = useState('');
+  const [selectedBank, setSelectedBank] = useState('');
+  const [showBanks, setShowBanks] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [paymentState, setPaymentState] = useState('idle');
+
+  const subtotal = PRODUCT.price * PRODUCT.quantity;
+  const formattedAmount = `₹${subtotal.toLocaleString('en-IN')}`;
+
+  function handleBack() {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/home');
+    }
+  }
+
+  function selectMethod(method) {
+    setSelectedMethod(method);
+    setErrors({});
+  }
+
+  function formatCardNumber(value) {
+    const digits = value.replace(/\D/g, '').slice(0, 16);
+    return digits.replace(/(\d{4})(?=\d)/g, '$1 ');
+  }
+
+  function formatExpiry(value) {
+    const digits = value.replace(/\D/g, '').slice(0, 4);
+    return digits.length >= 3 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits;
+  }
+
+  function validatePayment() {
+    const nextErrors = {};
+
+    if (selectedMethod === 'upi') {
+      if (!upiId.trim()) {
+        nextErrors.upiId = 'Enter your UPI ID.';
+      } else if (!/^[\w.-]+@[\w.-]+$/.test(upiId.trim())) {
+        nextErrors.upiId = 'Enter a valid UPI ID, for example name@bank.';
+      }
+    }
+
+    if (selectedMethod === 'credit' || selectedMethod === 'debit') {
+      if (!cardholderName.trim()) {
+        nextErrors.cardholderName = 'Enter the cardholder name.';
+      }
+
+      const digits = cardNumber.replace(/\s/g, '');
+      if (!digits) {
+        nextErrors.cardNumber = 'Enter your card number.';
+      } else if (!/^\d{16}$/.test(digits)) {
+        nextErrors.cardNumber = 'Card number must be 16 digits.';
+      }
+
+      if (!expiryDate) {
+        nextErrors.expiryDate = 'Enter expiry date.';
+      } else if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(expiryDate)) {
+        nextErrors.expiryDate = 'Use MM/YY format.';
+      }
+
+      if (!cvv) {
+        nextErrors.cvv = 'Enter CVV.';
+      } else if (!/^\d{3,4}$/.test(cvv)) {
+        nextErrors.cvv = 'CVV must be 3 or 4 digits.';
+      }
+    }
+
+    if (selectedMethod === 'bank' && !selectedBank) {
+      nextErrors.bank = 'Select your bank.';
+    }
+
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
+  }
+
+  function handlePay() {
+    if (!validatePayment()) return;
+
+    setPaymentState('loading');
+    setTimeout(() => {
+      const shouldSucceed = Date.now() % 5 !== 0;
+      setPaymentState(shouldSucceed ? 'success' : 'failed');
+    }, 1800);
+  }
+
+  function resetPayment() {
+    setPaymentState('idle');
+  }
+
+  if (paymentState === 'success' || paymentState === 'failed') {
+    const success = paymentState === 'success';
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.statusContainer}>
+          <View style={[styles.statusIcon, success ? styles.successIcon : styles.failedIcon]}>
+            <Text style={styles.statusIconText}>{success ? '✓' : '!'}</Text>
+          </View>
+          <Text style={styles.statusTitle}>{success ? 'Payment Successful' : 'Payment Failed'}</Text>
+          <Text style={styles.statusSubtitle}>
+            {success
+              ? `Your payment of ${formattedAmount} was completed successfully.`
+              : 'We could not complete your payment. Please check your details and try again.'}
+          </Text>
+          {success ? (
+            <Pressable
+              accessibilityRole="button"
+              onPress={handleBack}
+              style={({ pressed }) => [styles.primaryButton, pressed && styles.buttonPressed]}>
+              <Text style={styles.primaryButtonText}>Back to Home</Text>
+            </Pressable>
+          ) : (
+            <Pressable
+              accessibilityRole="button"
+              onPress={resetPayment}
+              style={({ pressed }) => [styles.primaryButton, pressed && styles.buttonPressed]}>
+              <Text style={styles.primaryButtonText}>Retry Payment</Text>
+            </Pressable>
+          )}
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoidingView}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}>
+          <View style={styles.header}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Go back"
+              onPress={handleBack}
+              style={({ pressed }) => [styles.backButton, pressed && styles.buttonPressed]}>
+              <Text style={styles.backButtonText}>‹</Text>
+            </Pressable>
+            <Text style={styles.headerTitle}>Payment</Text>
+            <View style={styles.headerSpacer} />
+          </View>
+
+          <View style={styles.card}>
+            <Text style={styles.sectionTitle}>Order Summary</Text>
+            <View style={styles.productRow}>
+              <View style={styles.productDetails}>
+                <Text style={styles.productName}>{PRODUCT.name}</Text>
+                <Text style={styles.productQuantity}>Quantity: {PRODUCT.quantity}</Text>
+              </View>
+              <Text style={styles.productPrice}>₹{PRODUCT.price.toLocaleString('en-IN')}</Text>
+            </View>
+            <View style={styles.divider} />
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Subtotal</Text>
+              <Text style={styles.summaryValue}>₹{subtotal.toLocaleString('en-IN')}</Text>
+            </View>
+            <View style={styles.summaryRow}>
+              <Text style={styles.totalLabel}>Total amount</Text>
+              <Text style={styles.totalAmount}>{formattedAmount}</Text>
+            </View>
+          </View>
+
+          <View style={styles.amountCard}>
+            <Text style={styles.amountLabel}>Amount to pay</Text>
+            <Text style={styles.amountValue}>{formattedAmount}</Text>
+          </View>
+
+          <View style={styles.card}>
+            <Text style={styles.sectionTitle}>Payment Method</Text>
+            <View style={styles.methodsGrid}>
+              {METHODS.map((method) => {
+                const selected = selectedMethod === method.id;
+                return (
+                  <Pressable
+                    key={method.id}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected }}
+                    onPress={() => selectMethod(method.id)}
+                    style={({ pressed }) => [
+                      styles.methodCard,
+                      selected && styles.methodCardSelected,
+                      pressed && styles.buttonPressed,
+                    ]}>
+                    <View style={[styles.methodIcon, selected && styles.methodIconSelected]}>
+                      <Text style={[styles.methodIconText, selected && styles.methodIconTextSelected]}>
+                        {method.symbol}
+                      </Text>
+                    </View>
+                    <Text style={[styles.methodLabel, selected && styles.methodLabelSelected]}>
+                      {method.label}
+                    </Text>
+                    <View style={[styles.radio, selected && styles.radioSelected]}>
+                      {selected ? <View style={styles.radioInner} /> : null}
+                    </View>
+                  </Pressable>
+                );
+              })}
+            </View>
+          </View>
+
+          <View style={styles.card}>
+            <Text style={styles.sectionTitle}>Payment Details</Text>
+
+            {selectedMethod === 'upi' ? (
+              <>
+                <Text style={styles.label}>UPI ID</Text>
+                <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  onChangeText={(value) => {
+                    setUpiId(value);
+                    setErrors((current) => ({ ...current, upiId: undefined }));
+                  }}
+                  placeholder="name@bank"
+                  placeholderTextColor="#94A3B8"
+                  style={[styles.input, errors.upiId && styles.inputError]}
+                  value={upiId}
+                />
+                {errors.upiId ? <Text style={styles.errorText}>{errors.upiId}</Text> : null}
+              </>
+            ) : null}
+
+            {selectedMethod === 'credit' || selectedMethod === 'debit' ? (
+              <>
+                <Text style={styles.label}>Cardholder Name</Text>
+                <TextInput
+                  autoCapitalize="words"
+                  onChangeText={(value) => {
+                    setCardholderName(value);
+                    setErrors((current) => ({ ...current, cardholderName: undefined }));
+                  }}
+                  placeholder="Name on card"
+                  placeholderTextColor="#94A3B8"
+                  style={[styles.input, errors.cardholderName && styles.inputError]}
+                  value={cardholderName}
+                />
+                {errors.cardholderName ? (
+                  <Text style={styles.errorText}>{errors.cardholderName}</Text>
+                ) : null}
+
+                <Text style={styles.label}>Card Number</Text>
+                <TextInput
+                  keyboardType="number-pad"
+                  onChangeText={(value) => {
+                    setCardNumber(formatCardNumber(value));
+                    setErrors((current) => ({ ...current, cardNumber: undefined }));
+                  }}
+                  placeholder="1234 5678 9012 3456"
+                  placeholderTextColor="#94A3B8"
+                  style={[styles.input, errors.cardNumber && styles.inputError]}
+                  value={cardNumber}
+                />
+                {errors.cardNumber ? <Text style={styles.errorText}>{errors.cardNumber}</Text> : null}
+
+                <View style={styles.inputRow}>
+                  <View style={styles.inputColumn}>
+                    <Text style={styles.label}>Expiry Date</Text>
+                    <TextInput
+                      keyboardType="number-pad"
+                      onChangeText={(value) => {
+                        setExpiryDate(formatExpiry(value));
+                        setErrors((current) => ({ ...current, expiryDate: undefined }));
+                      }}
+                      placeholder="MM/YY"
+                      placeholderTextColor="#94A3B8"
+                      style={[styles.input, errors.expiryDate && styles.inputError]}
+                      value={expiryDate}
+                    />
+                    {errors.expiryDate ? (
+                      <Text style={styles.errorText}>{errors.expiryDate}</Text>
+                    ) : null}
+                  </View>
+                  <View style={styles.inputColumn}>
+                    <Text style={styles.label}>CVV</Text>
+                    <TextInput
+                      keyboardType="number-pad"
+                      maxLength={4}
+                      secureTextEntry
+                      onChangeText={(value) => {
+                        setCvv(value.replace(/\D/g, '').slice(0, 4));
+                        setErrors((current) => ({ ...current, cvv: undefined }));
+                      }}
+                      placeholder="123"
+                      placeholderTextColor="#94A3B8"
+                      style={[styles.input, errors.cvv && styles.inputError]}
+                      value={cvv}
+                    />
+                    {errors.cvv ? <Text style={styles.errorText}>{errors.cvv}</Text> : null}
+                  </View>
+                </View>
+              </>
+            ) : null}
+
+            {selectedMethod === 'bank' ? (
+              <>
+                <Text style={styles.label}>Select Bank</Text>
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() => setShowBanks((visible) => !visible)}
+                  style={[styles.bankSelector, errors.bank && styles.inputError]}>
+                  <Text style={selectedBank ? styles.bankSelectedText : styles.bankPlaceholderText}>
+                    {selectedBank || 'Choose your bank'}
+                  </Text>
+                  <Text style={styles.bankChevron}>{showBanks ? '⌃' : '⌄'}</Text>
+                </Pressable>
+                {errors.bank ? <Text style={styles.errorText}>{errors.bank}</Text> : null}
+                {showBanks ? (
+                  <View style={styles.bankList}>
+                    {BANKS.map((bank) => (
+                      <Pressable
+                        key={bank}
+                        accessibilityRole="button"
+                        onPress={() => {
+                          setSelectedBank(bank);
+                          setShowBanks(false);
+                          setErrors((current) => ({ ...current, bank: undefined }));
+                        }}
+                        style={styles.bankOption}>
+                        <Text style={styles.bankOptionText}>{bank}</Text>
+                      </Pressable>
+                    ))}
+                  </View>
+                ) : null}
+              </>
+            ) : null}
+          </View>
+
+          <Pressable
+            accessibilityRole="button"
+            accessibilityState={{ disabled: paymentState === 'loading' }}
+            disabled={paymentState === 'loading'}
+            onPress={handlePay}
+            style={({ pressed }) => [
+              styles.primaryButton,
+              paymentState === 'loading' && styles.primaryButtonLoading,
+              pressed && styles.buttonPressed,
+            ]}>
+            <Text style={styles.primaryButtonText}>
+              {paymentState === 'loading' ? 'Processing...' : `Pay Now  ${formattedAmount}`}
+            </Text>
+          </Pressable>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#F3F6FB',
+  },
+  keyboardAvoidingView: {
+    flex: 1,
+  },
+  scrollContent: {
+    width: '100%',
+    maxWidth: 440,
+    alignSelf: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 32,
+  },
+  header: {
+    height: 56,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  backButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#DCE3ED',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  backButtonText: {
+    color: '#14213D',
+    fontSize: 28,
+    lineHeight: 30,
+    marginBottom: 3,
+  },
+  headerTitle: {
+    color: '#14213D',
+    fontSize: 20,
+    fontWeight: '700',
+  },
+  headerSpacer: {
+    width: 44,
+  },
+  card: {
+    width: '100%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 14,
+    shadowColor: '#162B4D',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.06,
+    shadowRadius: 20,
+    elevation: 3,
+  },
+  sectionTitle: {
+    color: '#14213D',
+    fontSize: 17,
+    fontWeight: '700',
+    marginBottom: 16,
+  },
+  productRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  productDetails: {
+    flex: 1,
+    paddingRight: 12,
+  },
+  productName: {
+    color: '#24324A',
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  productQuantity: {
+    color: '#64748B',
+    fontSize: 13,
+    marginTop: 5,
+  },
+  productPrice: {
+    color: '#14213D',
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#EDF1F6',
+    marginVertical: 16,
+  },
+  summaryRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  summaryLabel: {
+    color: '#64748B',
+    fontSize: 14,
+  },
+  summaryValue: {
+    color: '#24324A',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  totalLabel: {
+    color: '#14213D',
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  totalAmount: {
+    color: '#2563EB',
+    fontSize: 18,
+    fontWeight: '800',
+  },
+  amountCard: {
+    height: 82,
+    borderRadius: 16,
+    backgroundColor: '#2563EB',
+    paddingHorizontal: 20,
+    justifyContent: 'center',
+    marginBottom: 14,
+  },
+  amountLabel: {
+    color: '#DDE9FF',
+    fontSize: 12,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+  },
+  amountValue: {
+    color: '#FFFFFF',
+    fontSize: 26,
+    fontWeight: '800',
+    marginTop: 3,
+  },
+  methodsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  methodCard: {
+    width: '48%',
+    minHeight: 118,
+    borderWidth: 1,
+    borderColor: '#DCE3ED',
+    borderRadius: 12,
+    padding: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  methodCardSelected: {
+    borderColor: '#2563EB',
+    borderWidth: 2,
+    backgroundColor: '#F8FAFF',
+  },
+  methodIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 10,
+    backgroundColor: '#EDF2F8',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  methodIconSelected: {
+    backgroundColor: '#2563EB',
+  },
+  methodIconText: {
+    color: '#64748B',
+    fontSize: 11,
+    fontWeight: '800',
+  },
+  methodIconTextSelected: {
+    color: '#FFFFFF',
+  },
+  methodLabel: {
+    color: '#24324A',
+    fontSize: 13,
+    fontWeight: '600',
+    marginTop: 8,
+    textAlign: 'center',
+  },
+  methodLabelSelected: {
+    color: '#2563EB',
+  },
+  radio: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    borderWidth: 1.5,
+    borderColor: '#B7C3D3',
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  radioSelected: {
+    borderColor: '#2563EB',
+  },
+  radioInner: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#2563EB',
+  },
+  label: {
+    color: '#24324A',
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 8,
+    marginTop: 4,
+  },
+  input: {
+    height: 52,
+    borderWidth: 1,
+    borderColor: '#DCE3ED',
+    borderRadius: 12,
+    paddingHorizontal: 15,
+    color: '#14213D',
+    fontSize: 15,
+    marginBottom: 4,
+    backgroundColor: '#FFFFFF',
+  },
+  inputError: {
+    borderColor: '#B42318',
+  },
+  errorText: {
+    color: '#B42318',
+    fontSize: 12,
+    lineHeight: 17,
+    marginBottom: 6,
+  },
+  inputRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  inputColumn: {
+    flex: 1,
+  },
+  bankSelector: {
+    height: 52,
+    borderWidth: 1,
+    borderColor: '#DCE3ED',
+    borderRadius: 12,
+    paddingHorizontal: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  bankSelectedText: {
+    color: '#14213D',
+    fontSize: 15,
+  },
+  bankPlaceholderText: {
+    color: '#94A3B8',
+    fontSize: 15,
+  },
+  bankChevron: {
+    color: '#64748B',
+    fontSize: 18,
+  },
+  bankList: {
+    marginTop: 8,
+    borderWidth: 1,
+    borderColor: '#DCE3ED',
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  bankOption: {
+    height: 48,
+    justifyContent: 'center',
+    paddingHorizontal: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EDF1F6',
+  },
+  bankOptionText: {
+    color: '#24324A',
+    fontSize: 14,
+  },
+  primaryButton: {
+    height: 52,
+    borderRadius: 12,
+    backgroundColor: '#2563EB',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 4,
+  },
+  primaryButtonLoading: {
+    backgroundColor: '#5B86D9',
+  },
+  primaryButtonText: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  buttonPressed: {
+    opacity: 0.82,
+  },
+  statusContainer: {
+    flex: 1,
+    maxWidth: 440,
+    width: '100%',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingBottom: 30,
+  },
+  statusIcon: {
+    width: 84,
+    height: 84,
+    borderRadius: 42,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 22,
+  },
+  successIcon: {
+    backgroundColor: '#16A34A',
+  },
+  failedIcon: {
+    backgroundColor: '#DC2626',
+  },
+  statusIconText: {
+    color: '#FFFFFF',
+    fontSize: 42,
+    fontWeight: '800',
+  },
+  statusTitle: {
+    color: '#14213D',
+    fontSize: 24,
+    fontWeight: '800',
+    textAlign: 'center',
+  },
+  statusSubtitle: {
+    color: '#64748B',
+    fontSize: 15,
+    lineHeight: 22,
+    textAlign: 'center',
+    marginTop: 10,
+    marginBottom: 28,
+  },
+});
