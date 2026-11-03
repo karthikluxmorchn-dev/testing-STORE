@@ -11,7 +11,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 
-import { styles } from '../login-page.styles';
+import { styles } from './login-page.styles';
 
 const DUMMY_CREDENTIALS = {
   email: 'demo@bar.com',
