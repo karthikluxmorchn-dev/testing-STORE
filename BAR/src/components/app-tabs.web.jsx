@@ -4,14 +4,17 @@ import {
   TabTrigger,
   TabSlot,
 } from 'expo-router/ui';
-import { SymbolView } from 'expo-symbols';
-import { Pressable, useColorScheme, View, StyleSheet } from 'react-native';
+import { Pressable, View, StyleSheet, Text } from 'react-native';
 
-import { Colors, MaxContentWidth, Spacing } from '@/constants/theme';
+import { MaxContentWidth, Spacing } from '@/constants/theme';
 
-import { ExternalLink } from './external-link';
-import { ThemedText } from './themed-text';
-import { ThemedView } from './themed-view';
+const colors = {
+  ink: '#12231D',
+  panel: '#1C332B',
+  paper: '#F3EBDD',
+  muted: '#C4C1B2',
+  accent: '#D9F56D',
+};
 
 export default function AppTabs() {
   return (
@@ -23,8 +26,12 @@ export default function AppTabs() {
             <TabButton>Home</TabButton>
           </TabTrigger>
           <TabTrigger name="explore" href="/explore" asChild>
-            <TabButton>Explore</TabButton>
+            <TabButton>Menu</TabButton>
           </TabTrigger>
+          <TabTrigger name="profile" href="/profile" asChild>
+            <TabButton>Profile</TabButton>
+          </TabTrigger>
+
         </CustomTabList>
       </TabList>
     </Tabs>
@@ -34,41 +41,24 @@ export default function AppTabs() {
 export function TabButton({ children, isFocused, ...props }) {
   return (
     <Pressable {...props} style={({ pressed }) => pressed && styles.pressed}>
-      <ThemedView
-        type={isFocused ? 'backgroundSelected' : 'backgroundElement'}
-        style={styles.tabButtonView}>
-        <ThemedText type="small" themeColor={isFocused ? 'text' : 'textSecondary'}>
+      <View style={[styles.tabButtonView, isFocused && styles.tabButtonSelected]}>
+        <Text style={[styles.tabButtonText, isFocused && styles.tabButtonTextSelected]}>
           {children}
-        </ThemedText>
-      </ThemedView>
+        </Text>
+      </View>
     </Pressable>
   );
 }
 
 export function CustomTabList(props) {
-  const scheme = useColorScheme();
-  const colors = Colors[scheme === 'dark' ? 'dark' : 'light'];
-
   return (
-    <View {...props} style={styles.tabListContainer}>
-      <ThemedView type="backgroundElement" style={styles.innerContainer}>
-        <ThemedText type="smallBold" style={styles.brandText}>
-          Expo Starter
-        </ThemedText>
+    <View {...props} style={[styles.tabListContainer, props.style]}>
+      <View style={styles.innerContainer}>
+        <Text style={styles.brandText}>BAR / COCKTAIL ROOM</Text>
 
         {props.children}
 
-        <ExternalLink href="https://docs.expo.dev" asChild>
-          <Pressable style={styles.externalPressable}>
-            <ThemedText type="link">Docs</ThemedText>
-            <SymbolView
-              tintColor={colors.text}
-              name={{ ios: 'arrow.up.right.square', web: 'link' }}
-              size={12}
-            />
-          </Pressable>
-        </ExternalLink>
-      </ThemedView>
+      </View>
     </View>
   );
 }
@@ -76,38 +66,53 @@ export function CustomTabList(props) {
 const styles = StyleSheet.create({
   tabListContainer: {
     position: 'absolute',
+    bottom: 12,
     width: '100%',
     padding: Spacing.three,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
+    zIndex: 10,
   },
   innerContainer: {
+    width: '100%',
     paddingVertical: Spacing.two,
-    paddingHorizontal: Spacing.five,
-    borderRadius: Spacing.five,
+    paddingHorizontal: Spacing.three,
+    borderRadius: 4,
     flexDirection: 'row',
     alignItems: 'center',
     flexGrow: 1,
     gap: Spacing.two,
     maxWidth: MaxContentWidth,
+    backgroundColor: colors.panel,
+    borderWidth: 1,
+    borderColor: '#496050',
   },
   brandText: {
     marginRight: 'auto',
+    color: colors.muted,
+    fontSize: 9,
+    fontWeight: '700',
+    letterSpacing: 1.1,
   },
   pressed: {
     opacity: 0.7,
   },
   tabButtonView: {
-    paddingVertical: Spacing.one,
-    paddingHorizontal: Spacing.three,
-    borderRadius: Spacing.three,
+    paddingVertical: 9,
+    paddingHorizontal: 13,
+    borderRadius: 3,
   },
-  externalPressable: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: Spacing.one,
-    marginLeft: Spacing.three,
+  tabButtonSelected: {
+    backgroundColor: colors.accent,
+  },
+  tabButtonText: {
+    color: colors.paper,
+    fontSize: 11,
+    fontWeight: '600',
+  },
+  tabButtonTextSelected: {
+    color: colors.ink,
+    fontWeight: '700',
   },
 });
