@@ -109,15 +109,6 @@ export const styles = StyleSheet.create({
     color: '#fffaf0',
     fontSize: 17,
   },
-  heroIndex: {
-    position: 'absolute',
-    top: 16,
-    right: 16,
-    color: '#fffaf0',
-    fontSize: 10,
-    fontWeight: '700',
-    letterSpacing: 0.8,
-  },
   detailsRow: {
     minHeight: 78,
     flexDirection: 'row',
@@ -152,109 +143,85 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     paddingLeft: 8,
   },
-  menuSection: {
-    paddingTop: 25,
+  placesSection: {
+    paddingTop: 24,
   },
-  sectionHeading: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
-  },
-  sectionEyebrow: {
-    color: '#788078',
-    fontSize: 9,
-    fontWeight: '800',
-    letterSpacing: 1.3,
-  },
-  sectionTitle: {
-    color: '#1d291f',
-    fontSize: 29,
-    fontWeight: '800',
-    marginTop: 4,
-  },
-  menuMark: {
-    color: '#7d857b',
-    fontSize: 9,
-    fontWeight: '700',
-    marginBottom: 5,
-  },
-  categoryList: {
-    gap: 8,
-    paddingTop: 17,
-    paddingBottom: 5,
-  },
-  categoryButton: {
-    minHeight: 34,
-    justifyContent: 'center',
-    paddingHorizontal: 13,
-    borderWidth: 1,
-    borderColor: '#d0d2c8',
-    borderRadius: 3,
-  },
-  categoryButtonSelected: {
-    backgroundColor: '#26372b',
-    borderColor: '#26372b',
-  },
-  categoryText: {
-    color: '#4e594f',
-    fontSize: 11,
-    fontWeight: '700',
-  },
-  categoryTextSelected: {
-    color: '#f8f4e9',
-  },
-  menuList: {
-    marginTop: 8,
-  },
-  menuItem: {
-    minHeight: 68,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#d7d4ca',
-  },
-  menuItemLast: {
-    borderBottomWidth: 0,
-  },
-  menuItemCopy: {
-    flex: 1,
-    gap: 5,
-  },
-  itemName: {
+  placesHeading: {
     color: '#20291f',
-    fontSize: 14,
-    fontWeight: '700',
+    fontSize: 21,
+    fontWeight: '800',
+    marginBottom: 14,
   },
-  itemDetail: {
-    color: '#727b71',
+  placesGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    rowGap: 16,
+  },
+  placeCard: {
+    overflow: 'hidden',
+    backgroundColor: '#f7f8fb',
+    borderRadius: 8,
+  },
+  placeImageWrap: {
+    position: 'relative',
+  },
+  placeImage: {
+    width: '100%',
+    height: 180,
+    backgroundColor: '#d7d4ca',
+  },
+  placeOffer: {
+    position: 'absolute',
+    right: 0,
+    bottom: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    backgroundColor: '#2670e8',
+  },
+  placeOfferText: {
+    color: '#ffffff',
     fontSize: 11,
+    fontWeight: '800',
   },
-  itemPrice: {
-    color: '#26372b',
-    fontSize: 13,
-    fontWeight: '700',
+  placeDetails: {
+    gap: 5,
+    paddingHorizontal: 11,
+    paddingTop: 10,
+    paddingBottom: 12,
   },
-  visitButton: {
-    minHeight: 48,
+  placeName: {
+    color: '#171d19',
+    fontSize: 16,
+    fontWeight: '800',
+  },
+  placeRatingRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 14,
-    paddingHorizontal: 15,
-    backgroundColor: '#26372b',
-    borderRadius: 3,
+    gap: 8,
   },
-  visitButtonText: {
-    color: '#f8f4e9',
-    fontSize: 10,
+  placeRating: {
+    overflow: 'hidden',
+    color: '#ffffff',
+    fontSize: 11,
     fontWeight: '800',
-    letterSpacing: 0.9,
+    paddingHorizontal: 5,
+    paddingVertical: 3,
+    backgroundColor: '#168345',
+    borderRadius: 4,
   },
-  visitArrow: {
-    color: '#f8f4e9',
-    fontSize: 18,
+  placeType: {
+    color: '#68716b',
+    fontSize: 10,
+    fontWeight: '600',
+  },
+  placeCuisine: {
+    color: '#5d665f',
+    fontSize: 12,
+  },
+  placeLocation: {
+    color: '#5d665f',
+    fontSize: 12,
   },
   pressed: {
     opacity: 0.78,

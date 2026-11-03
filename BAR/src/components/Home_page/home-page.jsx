@@ -1,36 +1,98 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Alert,
+  Image,
   ImageBackground,
   Pressable,
   ScrollView,
   Text,
   View,
+  useWindowDimensions,
 } from 'react-native';
+import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { styles } from './home-page.styles';
 
-const categories = ['Tonight', 'Cocktails', 'Small plates'];
-
-const menuItems = [
-  { name: 'Garden Gimlet', detail: 'Gin · cucumber · basil · lime', price: '$16', category: 'Cocktails' },
-  { name: 'House Martini', detail: 'Vodka or gin · olive · lemon oil', price: '$18', category: 'Cocktails' },
-  { name: 'Warm Castelvetrano Olives', detail: 'Orange · rosemary · fennel seed', price: '$9', category: 'Small plates' },
+const featuredPlaces = [
+  {
+    name: 'The Living Room',
+    rating: '4.6',
+    cuisines: 'North Indian, Pasta, Italian, Fast Food',
+    location: 'Anna Nagar East, Chennai',
+    image: 'photo-1517248135467-4c7edcad34c4',
+  },
+  {
+    name: 'Black Orchid',
+    rating: '4.6',
+    cuisines: 'Sushi, Asian, Pizza, Japanese',
+    location: 'RA Puram, Chennai',
+    image: 'photo-1514933651103-005eec06c04b',
+  },
+  {
+    name: 'The Thief - Rooftop | Bar',
+    rating: '3.9',
+    cuisines: 'North Indian, Continental, Italian',
+    location: 'Nungambakkam, Chennai',
+    offer: 'Flat 20% OFF',
+    image: 'photo-1515003197210-e0cd7184f8b5',
+  },
+  {
+    name: 'Koox',
+    rating: '4.5',
+    cuisines: 'Japanese, Sushi, Sichuan, Desserts',
+    location: 'Nandanam, Chennai',
+    image: 'photo-1519671482749-fd09be7ccebf',
+  },
+  {
+    name: 'Lower Deck',
+    rating: '4.3',
+    cuisines: 'Continental, Bar Food, Grill',
+    location: 'T. Nagar, Chennai',
+    image: 'photo-1514933651103-005eec06c04b',
+  },
+  {
+    name: 'Radio Room',
+    rating: '4.4',
+    cuisines: 'Asian, Tapas, Cocktails',
+    location: 'Alwarpet, Chennai',
+    image: 'photo-1514362545857-3bc16c4c7d1b',
+  },
+  {
+    name: "Watson's",
+    rating: '4.2',
+    cuisines: 'North Indian, Chinese, Bar Food',
+    location: 'Velachery, Chennai',
+    image: 'photo-1517248135467-4c7edcad34c4',
+  },
+  {
+    name: 'IGNNA Cocktail Bar',
+    rating: '4.5',
+    cuisines: 'Cocktails, Small Plates, Asian',
+    location: 'Adyar, Chennai',
+    offer: 'Flat 10% OFF',
+    image: 'photo-1470337458703-46ad1756a187',
+  },
 ];
 
 export default function HomePage() {
-  const [selectedCategory, setSelectedCategory] = useState('Tonight');
-  const visibleItems = selectedCategory === 'Tonight'
-    ? menuItems
-    : menuItems.filter((item) => item.category === selectedCategory);
+  const [isMounted, setIsMounted] = useState(false);
+  const { width } = useWindowDimensions();
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setIsMounted(true));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+  const layoutWidth = isMounted ? width : 375;
+  const columns = layoutWidth >= 1100 ? 4 : layoutWidth >= 760 ? 3 : 2;
+  const gap = 14;
+  const cardWidth = (layoutWidth - 40 - gap * (columns - 1)) / columns;
 
   return (
     <SafeAreaView edges={['top']} style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <View>
-            <Text style={styles.wordmark}> JP BAR<Text style={styles.wordmarkDot}></Text></Text>
+            <Text style={styles.wordmark}> 🍻JP BAR<Text style={styles.wordmarkDot}></Text></Text>
             <Text style={styles.location}>North Madras · Chennai📍</Text>
           </View>
           <View style={styles.openBadge}>
@@ -73,51 +135,56 @@ export default function HomePage() {
           <Text style={styles.pin}>↗</Text>
         </View>
 
-        <View style={styles.menuSection}>
-          <View style={styles.sectionHeading}>
-            <View>
-              <Text style={styles.sectionEyebrow}>MADE FOR THE MOMENT</Text>
-              <Text style={styles.sectionTitle}>At the bar</Text>
-            </View>
-            <Text style={styles.menuMark}>MENU  /  01</Text>
-          </View>
-
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryList}>
-            {categories.map((category) => {
-              const isSelected = selectedCategory === category;
-              return (
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityState={{ selected: isSelected }}
-                  key={category}
-                  onPress={() => setSelectedCategory(category)}
-                  style={[styles.categoryButton, isSelected && styles.categoryButtonSelected]}>
-                  <Text style={[styles.categoryText, isSelected && styles.categoryTextSelected]}>{category}</Text>
-                </Pressable>
-              );
-            })}
-          </ScrollView>
-
-          <View style={styles.menuList}>
-            {visibleItems.map((item, index) => (
-              <View key={item.name} style={[styles.menuItem, index === visibleItems.length - 1 && styles.menuItemLast]}>
-                <View style={styles.menuItemCopy}>
-                  <Text style={styles.itemName}>{item.name}</Text>
-                  <Text style={styles.itemDetail}>{item.detail}</Text>
+        <View style={styles.placesSection}>
+          <Text style={styles.placesHeading}>Popular bars & restaurants</Text>
+          <View style={styles.placesGrid}>
+            {featuredPlaces.map((place) => (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`View ${place.name}`}
+                key={place.name}
+                onPress={() => router.push({
+                  pathname: '/venue-detail',
+                  params: {
+                    name: place.name,
+                    rating: place.rating,
+                    cuisines: place.cuisines,
+                    location: place.location,
+                    image: place.image,
+                    offer: place.offer ?? '',
+                  },
+                })}
+                style={({ pressed }) => [
+                  styles.placeCard,
+                  { width: cardWidth },
+                  pressed && styles.pressed,
+                ]}>
+                <View style={styles.placeImageWrap}>
+                  <Image
+                    accessibilityLabel={`${place.name} venue`}
+                    source={{ uri: `https://images.unsplash.com/${place.image}?auto=format&fit=crop&w=720&h=480&q=85` }}
+                    style={styles.placeImage}
+                  />
+                  {place.offer ? (
+                    <View style={styles.placeOffer}>
+                      <Text style={styles.placeOfferText}>✿  {place.offer}</Text>
+                    </View>
+                  ) : null}
                 </View>
-                <Text style={styles.itemPrice}>{item.price}</Text>
-              </View>
+                <View style={styles.placeDetails}>
+                  <Text numberOfLines={1} style={styles.placeName}>{place.name}</Text>
+                  <View style={styles.placeRatingRow}>
+                    <Text style={styles.placeRating}>{place.rating} ★</Text>
+                    <Text style={styles.placeType}>DINING</Text>
+                  </View>
+                  <Text numberOfLines={1} style={styles.placeCuisine}>{place.cuisines}</Text>
+                  <Text numberOfLines={1} style={styles.placeLocation}>{place.location}</Text>
+                </View>
+              </Pressable>
             ))}
           </View>
         </View>
 
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => Alert.alert('Come on in', 'We are at 14 Orchard Street, open from 5 PM until late.')}
-          style={({ pressed }) => [styles.visitButton, pressed && styles.pressed]}>
-          <Text style={styles.visitButtonText}>COME FIND US</Text>
-          <Text style={styles.visitArrow}>↗</Text>
-        </Pressable>
       </ScrollView>
     </SafeAreaView>
   );
