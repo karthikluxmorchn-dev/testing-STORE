@@ -5,7 +5,7 @@ import { ThemedView } from './themed-view';
 
 import { Spacing } from '@/constants/theme';
 
-export function HintRow({ title = 'Try editing', hint = 'app/index.js' }) {
+export function HintRow({ title = 'Try editing', hint = 'app/index.jsx' }) {
   return (
     <View style={styles.stepRow}>
       <ThemedText type="small">{title}</ThemedText>
