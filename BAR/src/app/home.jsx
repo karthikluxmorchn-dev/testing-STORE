@@ -1,12 +1,5 @@
-import { StyleSheet, View } from 'react-native';
+import HomePage from '../components/Home_page/home-page';
 
 export default function HomeScreen() {
-  return <View style={styles.container} />;
+  return <HomePage />;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F3F6FB',
-  },
-});

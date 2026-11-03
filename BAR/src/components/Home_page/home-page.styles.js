@@ -1,0 +1,262 @@
+import { StyleSheet } from 'react-native';
+
+export const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#f1eee5',
+  },
+  content: {
+    paddingHorizontal: 20,
+    paddingBottom: 36,
+  },
+  header: {
+    minHeight: 76,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  wordmark: {
+    color: '#17221b',
+    fontSize: 31,
+    fontWeight: '900',
+    lineHeight: 34,
+  },
+  wordmarkDot: {
+    color: '#e35b3f',
+  },
+  location: {
+    color: '#667067',
+    fontSize: 9,
+    fontWeight: '700',
+    letterSpacing: 1.2,
+    marginTop: 3,
+  },
+  openBadge: {
+    height: 30,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 7,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: '#cbd2c8',
+    borderRadius: 3,
+  },
+  openDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: '#688b54',
+  },
+  openText: {
+    color: '#344334',
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+  },
+  hero: {
+    height: 330,
+    overflow: 'hidden',
+    justifyContent: 'flex-end',
+    backgroundColor: '#29382f',
+  },
+  heroImage: {
+    borderRadius: 4,
+  },
+  heroShade: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(14, 21, 17, 0.48)',
+  },
+  heroContent: {
+    paddingHorizontal: 22,
+    paddingBottom: 26,
+  },
+  heroEyebrow: {
+    color: '#d8d1b9',
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 1.4,
+    marginBottom: 12,
+  },
+  heroTitle: {
+    color: '#fffaf0',
+    fontSize: 42,
+    fontWeight: '800',
+    lineHeight: 43,
+  },
+  heroSubtitle: {
+    color: '#f1eee5',
+    fontSize: 13,
+    marginTop: 10,
+  },
+  reserveButton: {
+    minHeight: 44,
+    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 20,
+    marginTop: 19,
+    paddingHorizontal: 15,
+    backgroundColor: '#e35b3f',
+    borderRadius: 3,
+  },
+  reserveButtonText: {
+    color: '#fffaf0',
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.8,
+  },
+  reserveArrow: {
+    color: '#fffaf0',
+    fontSize: 17,
+  },
+  heroIndex: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    color: '#fffaf0',
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 0.8,
+  },
+  detailsRow: {
+    minHeight: 78,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 2,
+    borderBottomWidth: 1,
+    borderBottomColor: '#d7d4ca',
+  },
+  detailBlock: {
+    flex: 1,
+    gap: 6,
+  },
+  detailLabel: {
+    color: '#758075',
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 1.1,
+  },
+  detailValue: {
+    color: '#20291f',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  detailDivider: {
+    width: 1,
+    height: 31,
+    marginHorizontal: 15,
+    backgroundColor: '#d7d4ca',
+  },
+  pin: {
+    color: '#e35b3f',
+    fontSize: 18,
+    paddingLeft: 8,
+  },
+  menuSection: {
+    paddingTop: 25,
+  },
+  sectionHeading: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+  },
+  sectionEyebrow: {
+    color: '#788078',
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 1.3,
+  },
+  sectionTitle: {
+    color: '#1d291f',
+    fontSize: 29,
+    fontWeight: '800',
+    marginTop: 4,
+  },
+  menuMark: {
+    color: '#7d857b',
+    fontSize: 9,
+    fontWeight: '700',
+    marginBottom: 5,
+  },
+  categoryList: {
+    gap: 8,
+    paddingTop: 17,
+    paddingBottom: 5,
+  },
+  categoryButton: {
+    minHeight: 34,
+    justifyContent: 'center',
+    paddingHorizontal: 13,
+    borderWidth: 1,
+    borderColor: '#d0d2c8',
+    borderRadius: 3,
+  },
+  categoryButtonSelected: {
+    backgroundColor: '#26372b',
+    borderColor: '#26372b',
+  },
+  categoryText: {
+    color: '#4e594f',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  categoryTextSelected: {
+    color: '#f8f4e9',
+  },
+  menuList: {
+    marginTop: 8,
+  },
+  menuItem: {
+    minHeight: 68,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#d7d4ca',
+  },
+  menuItemLast: {
+    borderBottomWidth: 0,
+  },
+  menuItemCopy: {
+    flex: 1,
+    gap: 5,
+  },
+  itemName: {
+    color: '#20291f',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  itemDetail: {
+    color: '#727b71',
+    fontSize: 11,
+  },
+  itemPrice: {
+    color: '#26372b',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  visitButton: {
+    minHeight: 48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 14,
+    paddingHorizontal: 15,
+    backgroundColor: '#26372b',
+    borderRadius: 3,
+  },
+  visitButtonText: {
+    color: '#f8f4e9',
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.9,
+  },
+  visitArrow: {
+    color: '#f8f4e9',
+    fontSize: 18,
+  },
+  pressed: {
+    opacity: 0.78,
+  },
+});
