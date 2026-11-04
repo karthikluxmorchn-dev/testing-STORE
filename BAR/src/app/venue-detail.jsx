@@ -213,7 +213,13 @@ export default function VenueDetailScreen() {
               </Pressable>
               <Pressable
                 accessibilityRole="button"
-                onPress={() => Alert.alert('Pay Bill', 'Bill payment is not available yet.')}
+                onPress={() => router.push({
+                  pathname: '/payment',
+                  params: {
+                    name,
+                    priceForTwo,
+                  },
+                })}
                 style={({ pressed }) => [styles.payButton, pressed && styles.pressed]}>
                 <Text style={styles.payButtonText}>Pay Bill</Text>
               </Pressable>

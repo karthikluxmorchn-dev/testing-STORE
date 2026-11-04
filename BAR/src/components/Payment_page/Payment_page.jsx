@@ -10,13 +10,16 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 
-const PRODUCT = {
-  name: 'BAR Premium Membership',
-  quantity: 1,
-  price: 2499,
-};
+function getParam(value) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+function parsePrice(value) {
+  if (!value) return 0;
+  return Number(String(value).replace(/[^0-9]/g, '')) || 0;
+}
 
 const METHODS = [
   { id: 'upi', label: 'UPI', symbol: 'UP' },
@@ -28,6 +31,7 @@ const METHODS = [
 const BANKS = ['State Bank of India', 'HDFC Bank', 'ICICI Bank', 'Axis Bank'];
 
 export default function PaymentPage() {
+  const params = useLocalSearchParams();
   const [selectedMethod, setSelectedMethod] = useState('upi');
   const [upiId, setUpiId] = useState('');
   const [cardholderName, setCardholderName] = useState('');
@@ -39,7 +43,15 @@ export default function PaymentPage() {
   const [errors, setErrors] = useState({});
   const [paymentState, setPaymentState] = useState('idle');
 
-  const subtotal = PRODUCT.price * PRODUCT.quantity;
+  const productName = getParam(params.name) || 'BAR Premium Membership';
+  const productPrice = parsePrice(getParam(params.priceForTwo));
+  const productQuantity = 1;
+  const product = {
+    name: productName,
+    quantity: productQuantity,
+    price: productPrice,
+  };
+  const subtotal = product.quantity * product.price;
   const formattedAmount = `₹${subtotal.toLocaleString('en-IN')}`;
 
   function handleBack() {
@@ -182,10 +194,12 @@ export default function PaymentPage() {
             <Text style={styles.sectionTitle}>Order Summary</Text>
             <View style={styles.productRow}>
               <View style={styles.productDetails}>
-                <Text style={styles.productName}>{PRODUCT.name}</Text>
-                <Text style={styles.productQuantity}>Quantity: {PRODUCT.quantity}</Text>
+                <Text style={styles.productName}>{product.name}</Text>
+                <Text style={styles.productQuantity}>Quantity: {product.quantity}</Text>
               </View>
-              <Text style={styles.productPrice}>₹{PRODUCT.price.toLocaleString('en-IN')}</Text>
+              <Text style={styles.productPrice}>
+                ₹{product.price.toLocaleString('en-IN')} for two
+              </Text>
             </View>
             <View style={styles.divider} />
             <View style={styles.summaryRow}>
