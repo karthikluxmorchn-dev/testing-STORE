@@ -20,7 +20,9 @@ const featuredPlaces = [
     priceForTwo: '1,200',
     cuisines: 'North Indian, Pasta, Italian, Fast Food',
     location: 'Anna Nagar East, Chennai',
-    image: 'photo-1517248135467-4c7edcad34c4',
+    packagePrice: '2,000',
+    enquiries: 342,
+    image: 'photo-1514362545857-3bc16c4c7d1b',
   },
   {
     name: 'Black Orchid',
@@ -28,7 +30,9 @@ const featuredPlaces = [
     priceForTwo: '1,800',
     cuisines: 'Sushi, Asian, Pizza, Japanese',
     location: 'RA Puram, Chennai',
-    image: 'photo-1514933651103-005eec06c04b',
+    packagePrice: '2,500',
+    enquiries: 218,
+    image: 'photo-1470337458703-46ad1756a187',
   },
   {
     name: 'The Thief - Rooftop | Bar',
@@ -36,8 +40,10 @@ const featuredPlaces = [
     priceForTwo: '2,000',
     cuisines: 'North Indian, Continental, Italian',
     location: 'Nungambakkam, Chennai',
+    packagePrice: '2,000',
+    enquiries: 196,
     offer: 'Flat 20% OFF',
-    image: 'photo-1515003197210-e0cd7184f8b5',
+    image: 'photo-1536935338788846bb9981813',
   },
   {
     name: 'Koox',
@@ -45,7 +51,9 @@ const featuredPlaces = [
     priceForTwo: '1,600',
     cuisines: 'Japanese, Sushi, Sichuan, Desserts',
     location: 'Nandanam, Chennai',
-    image: 'photo-1519671482749-fd09be7ccebf',
+    packagePrice: '2,200',
+    enquiries: 164,
+    image: 'photo-1544145945-f90425340c7e',
   },
   {
     name: 'Lower Deck',
@@ -53,7 +61,9 @@ const featuredPlaces = [
     priceForTwo: '1,500',
     cuisines: 'Continental, Bar Food, Grill',
     location: 'T. Nagar, Chennai',
-    image: 'photo-1514933651103-005eec06c04b',
+    packagePrice: '1,800',
+    enquiries: 153,
+    image: 'photo-1551538827-9c037cb4f32a',
   },
   {
     name: 'Radio Room',
@@ -61,7 +71,9 @@ const featuredPlaces = [
     priceForTwo: '1,800',
     cuisines: 'Asian, Tapas, Cocktails',
     location: 'Alwarpet, Chennai',
-    image: 'photo-1514362545857-3bc16c4c7d1b',
+    packagePrice: '2,400',
+    enquiries: 147,
+    image: 'photo-1513558161293-cda8b47e7ef1',
   },
   {
     name: "Watson's",
@@ -69,7 +81,9 @@ const featuredPlaces = [
     priceForTwo: '1,400',
     cuisines: 'North Indian, Chinese, Bar Food',
     location: 'Velachery, Chennai',
-    image: 'photo-1517248135467-4c7edcad34c4',
+    packagePrice: '1,700',
+    enquiries: 129,
+    image: 'photo-1514362545857-3bc16c4c7d1b',
   },
   {
     name: 'IGNNA Cocktail Bar',
@@ -77,6 +91,8 @@ const featuredPlaces = [
     priceForTwo: '2,000',
     cuisines: 'Cocktails, Small Plates, Asian',
     location: 'Adyar, Chennai',
+    packagePrice: '2,600',
+    enquiries: 118,
     offer: 'Flat 10% OFF',
     image: 'photo-1470337458703-46ad1756a187',
   },
@@ -90,9 +106,7 @@ export default function HomePage() {
     return () => cancelAnimationFrame(frame);
   }, []);
   const layoutWidth = isMounted ? width : 375;
-  const columns = layoutWidth >= 1100 ? 4 : layoutWidth >= 760 ? 3 : 2;
-  const gap = 14;
-  const cardWidth = (layoutWidth - 40 - gap * (columns - 1)) / columns;
+  const isWideLayout = layoutWidth >= 760;
 
   return (
     <SafeAreaView edges={['top']} style={styles.safeArea}>
@@ -144,7 +158,7 @@ export default function HomePage() {
 
         <View style={styles.placesSection}>
           <Text style={styles.placesHeading}>Popular bars & restaurants</Text>
-          <View style={styles.placesGrid}>
+          <View style={styles.placesList}>
             {featuredPlaces.map((place) => (
               <Pressable
                 accessibilityRole="button"
@@ -164,18 +178,17 @@ export default function HomePage() {
                 })}
                 style={({ pressed }) => [
                   styles.placeCard,
-                  { width: cardWidth },
                   pressed && styles.pressed,
                 ]}>
-                <View style={styles.placeImageWrap}>
+                <View style={[
+                  styles.placeImageWrap,
+                  { width: isWideLayout ? '27%' : '38%' },
+                ]}>
                   <Image
                     accessibilityLabel={`${place.name} venue`}
                     source={{ uri: `https://images.unsplash.com/${place.image}?auto=format&fit=crop&w=720&h=480&q=85` }}
                     style={styles.placeImage}
                   />
-                  <View style={styles.placePrice}>
-                    <Text style={styles.placePriceText}>₹{place.priceForTwo} for two</Text>
-                  </View>
                   {place.offer ? (
                     <View style={styles.placeOffer}>
                       <Text style={styles.placeOfferText}>✿  {place.offer}</Text>
@@ -184,13 +197,29 @@ export default function HomePage() {
                 </View>
                 <View style={styles.placeDetails}>
                   <Text numberOfLines={1} style={styles.placeName}>{place.name}</Text>
+                  <Text numberOfLines={1} style={styles.placeLocation}>📍 {place.location}</Text>
                   <View style={styles.placeRatingRow}>
-                    <Text style={styles.placeRating}>{place.rating} ★</Text>
-                    <Text style={styles.placeType}>DINING</Text>
+                    <Text style={styles.placeStars}>★★★★☆</Text>
+                    <Text style={styles.placeRating}>{place.rating} / 5</Text>
+                    <Text style={styles.placeType}>Rated by guests</Text>
                   </View>
-                  <Text numberOfLines={1} style={styles.placeCuisine}>{place.cuisines}</Text>
-                  <Text numberOfLines={1} style={styles.placeLocation}>{place.location}</Text>
+                  <Text numberOfLines={2} style={styles.placeCuisine}>🍴 {place.cuisines}</Text>
+                  <Text numberOfLines={1} style={styles.placePackage}>🍸 Alcohol package starts from ₹{place.packagePrice} per person</Text>
+                  <Text style={styles.placeEnquiries}>{place.enquiries} people enquired this venue</Text>
+                  {!isWideLayout ? (
+                    <View style={styles.mobilePriceRow}>
+                      <Text style={styles.mobilePrice}>₹{place.priceForTwo} for two</Text>
+                      <Text style={styles.enquireButton}>Enquire Venue</Text>
+                    </View>
+                  ) : null}
                 </View>
+                {isWideLayout ? (
+                  <View style={styles.placePriceColumn}>
+                    <Text style={styles.menuStarts}>Menu starts from</Text>
+                    <Text style={styles.placePrice}>₹{place.priceForTwo}</Text>
+                    <Text style={styles.enquireButton}>Enquire Venue</Text>
+                  </View>
+                ) : null}
               </Pressable>
             ))}
           </View>
